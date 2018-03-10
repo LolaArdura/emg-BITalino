@@ -18,18 +18,12 @@ public class SignalAnalizer {
     public SignalAnalizer(Frame[] frame) {
         //We order the samples obtained in an ascending order
         frame= sortFrame(frame, 0, frame.length - 1);
-        for (Frame frame1: frame){
-            System.out.println(frame1.analog[0]);
-        }
         // We discard the 10% of the highest and the lowest values to get a more accurate resting potential
         // Since there are 100 samples we will discard the first and the last ten
         Frame[] shortenedFrame= new Frame[80];
         System.arraycopy(frame, 10, shortenedFrame, 0, shortenedFrame.length);
-        for(Frame frame1: shortenedFrame){
-            System.out.println(frame1.analog[0]);
-        }
         
-        restingPotential = energyCalculation(frame);
+        restingPotential = energyCalculation(shortenedFrame);
     }
 
     public int contraction(Frame[] frame) {
