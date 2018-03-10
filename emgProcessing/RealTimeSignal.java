@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 public class RealTimeSignal {
     public static void main (String[] args){
         Frame[] samples; // We will take 100 samples per second
+        Frame[] samples20;
         BITalino bitalino=null;
         try {
             bitalino = new BITalino();
@@ -33,12 +34,12 @@ public class RealTimeSignal {
             bitalino.start(channels); //starts acquiring from channels
             
             //To set the resting potential we need to read 5 seconds.
-            samples=bitalino.read(500); //500 samples = 5 seconds if the sampling rate is 100
+            samples=bitalino.read(100); //100 samples = 1s if the sampling rate is 100
             SignalAnalizer signalAnalizer= new SignalAnalizer(samples);
             
             while(true){
-                samples=bitalino.read(500); //we will be reading drom 5s to 5s 
-                int contraction= signalAnalizer.contraction(samples);
+                samples20=bitalino.read(20); //we will be reading 200ms to 200ms
+                int contraction= signalAnalizer.contraction(samples20);
                 System.out.println(contraction); //1 means contracted, 0 means at rest
             }
           

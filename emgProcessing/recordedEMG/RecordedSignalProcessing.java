@@ -7,6 +7,7 @@ package emgProcessing.recordedEMG;
 import java.io.*;
 import BITalino.Frame;
 import emgProcessing.SignalAnalizer;
+import java.util.Arrays;
 
 /**
  *
