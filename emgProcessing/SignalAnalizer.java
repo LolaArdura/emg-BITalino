@@ -6,6 +6,13 @@
 package emgProcessing;
 
 import BITalino.Frame;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,35 +21,35 @@ import BITalino.Frame;
 public class SignalAnalizer {
 
     private int restingPotential;
-
-    public SignalAnalizer(Frame[] frame) {
+    private int channel;
+    
+    public SignalAnalizer(Frame[] frame, int channel) throws IOException{
+        this.channel=channel;
+        
         //We order the samples obtained in an ascending order
         frame= sortFrame(frame, 0, frame.length - 1);
         // We discard the 10% of the highest and the lowest values to get a more accurate resting potential
-        // Since there are 100 samples we will discard the first and the last ten
-        Frame[] shortenedFrame= new Frame[80];
-        System.arraycopy(frame, 10, shortenedFrame, 0, shortenedFrame.length);
+        // This means that the length of the shortenedFrame is 0.8 the length of the initial Frame
+        Frame[] shortenedFrame= new Frame[(int)(0.8*frame.length)];
+        //We copy from the position 0.1*frame.length (so we start discarding the lowest 10% of the values
+        System.arraycopy(frame, (int)(0.1*frame.length), shortenedFrame, 0, shortenedFrame.length);
         
         restingPotential = energyCalculation(shortenedFrame);
     }
 
-    public int contraction(Frame[] frame) {
+    public boolean contraction(Frame[] frame) throws Exception {
         int signalEnergy = energyCalculation(frame);
 
         /*If the energy of the sample is more that five times the restingPotential, it means that
         the muscle is contracted*/
-        if (signalEnergy >= 5 * restingPotential) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return (signalEnergy >= 5 * restingPotential);
     }
 
     private int energyCalculation(Frame[] frame) {
         int energy = 0;
         for (int i = 0; i < frame.length; i++) {
             //we substract 512 to get rid of the offset
-            energy = energy + (int) Math.pow(frame[i].analog[0] - 512, 2);
+            energy = energy + (int) Math.pow(frame[i].analog[channel] - 512, 2);
         }
         return energy;
     }
@@ -59,27 +66,27 @@ public class SignalAnalizer {
 
     private int partition(Frame[] frame, int start, int end) {
         int pivot, left, right, temp;
-        pivot = frame[start].analog[0];
+        pivot = frame[start].analog[channel];
         left = start;
         right = end;
 
         while (true) {
-            while (left < end && frame[left].analog[0] <= pivot) {
+            while (left < end && frame[left].analog[channel] <= pivot) {
                 left++;
             }
-            while (right > start && frame[right].analog[0] > pivot) {
+            while (right > start && frame[right].analog[channel] > pivot) {
                 right--;
             }
             if (left >= right) {
                 break;
             }
-            temp = frame[left].analog[0];
-            frame[left].analog[0] = frame[right].analog[0];
-            frame[right].analog[0] = temp;
+            temp = frame[left].analog[channel];
+            frame[left].analog[channel] = frame[right].analog[channel];
+            frame[right].analog[channel] = temp;
         }
-        temp = frame[start].analog[0];
-        frame[start].analog[0] = frame[right].analog[0];
-        frame[right].analog[0] = temp;
+        temp = frame[start].analog[channel];
+        frame[start].analog[channel] = frame[right].analog[channel];
+        frame[right].analog[channel] = temp;
         return right;
     }
 
