@@ -38,14 +38,14 @@ public class RecordedSignalProcessing {
         }
         //We miss one datum because the first loop stops when i=100, and in the while loop we read another
         //line
-        SignalAnalizer signalAnalizer=new SignalAnalizer(samples);
+        SignalAnalizer signalAnalizer=new SignalAnalizer(samples,0);
         while((reading=bufferedReader.readLine())!=null){
          for (int i=0; i<100&&(reading!=null);i++){
             samples[i].analog[0]= Integer.parseInt(reading);
             reading= bufferedReader.readLine();
         }
-        int contraction=signalAnalizer.contraction(samples);
-        if(contraction==1) System.out.println("Contracted");
+        boolean contraction=signalAnalizer.contraction(samples);
+        if(contraction) System.out.println("Contracted");
         else System.out.println("Not contracted");
          
         }
