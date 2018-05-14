@@ -38,7 +38,7 @@ public class RecordedSignalProcessing {
         }
         //We miss one datum because the first loop stops when i=100, and in the while loop we read another
         //line
-        SignalAnalizer signalAnalizer=new SignalAnalizer(samples,0);
+        SignalAnalizer signalAnalizer=new SignalAnalizer(samples,0,5);
         while((reading=bufferedReader.readLine())!=null){
          for (int i=0; i<100&&(reading!=null);i++){
             samples[i].analog[0]= Integer.parseInt(reading);

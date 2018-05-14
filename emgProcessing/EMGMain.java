@@ -14,10 +14,11 @@ public class EMGMain {
         String macAddress="20:17:09:18:49:21";
         int samplingRate=1000;
         int[] channels={0,2};
+        int[] thresholds={5,5};
         String[] commands={"move relative 200 up","move relative 200 left"};
-        RealTimeSignal signal= new RealTimeSignal(macAddress,samplingRate,channels,commands);
+        RealTimeSignal signal= new RealTimeSignal(macAddress,samplingRate,channels,commands,thresholds);
         signal.openConnection();
-        signal.run();
+        signal.start();
         
     }
 }

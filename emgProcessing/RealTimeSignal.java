@@ -30,16 +30,18 @@ public class RealTimeSignal extends Thread {
     volatile boolean stop = false;
     int[] acquisitionChannels;
     String[] commands; //The first command will be assigned to the first channel
+    int[] thresholds;
 
     //we need method for the connection with 
     //the other application + channel from which we are acquiring data
     //The connection is made in the processor
-    public RealTimeSignal(String macAddress, int samplingRate, int[] acquisitionChannels, String[] commands) {
+    public RealTimeSignal(String macAddress, int samplingRate, int[] acquisitionChannels, String[] commands, int[] thresholds) {
         this.macAddress = macAddress;
         this.samplingRate = samplingRate;
         bitalino = new BITalino();
         this.acquisitionChannels = acquisitionChannels;
         this.commands = commands;
+        this.thresholds=thresholds;
     }
 
     @Override
@@ -101,7 +103,7 @@ public class RealTimeSignal extends Thread {
         System.out.println(acquisitionChannels.length);
         for (int channel = 0; channel < acquisitionChannels.length; channel++) {
             System.out.println(acquisitionChannels[channel]);
-            analizers.add(new SignalAnalizer(samples, acquisitionChannels[channel]));
+            analizers.add(new SignalAnalizer(samples, acquisitionChannels[channel],thresholds[channel]));
         }
         System.out.println("Resting potential set");
         while (!stop) {

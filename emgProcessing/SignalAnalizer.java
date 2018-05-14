@@ -23,7 +23,12 @@ public class SignalAnalizer {
     private int restingPotential;
     private int channel;
     
-    public SignalAnalizer(Frame[] frame, int channel) throws IOException{
+    //The threshold determines the number of times the energy of the EMG needs to be higher than the 
+    //resting potential energy
+    private int threshold;
+    
+    public SignalAnalizer(Frame[] frame, int channel, int threshold) throws IOException{
+        this.threshold=threshold;
         this.channel=channel;
         
         //We order the samples obtained in an ascending order
@@ -37,12 +42,12 @@ public class SignalAnalizer {
         restingPotential = energyCalculation(shortenedFrame);
     }
 
-    public boolean contraction(Frame[] frame) throws Exception {
+    public boolean contraction(Frame[] frame) {
         int signalEnergy = energyCalculation(frame);
 
         /*If the energy of the sample is more that five times the restingPotential, it means that
         the muscle is contracted*/
-        return (signalEnergy >= 5 * restingPotential);
+        return (signalEnergy >= threshold * restingPotential);
     }
 
     private int energyCalculation(Frame[] frame) {
