@@ -15,8 +15,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+
 
 /**
  *
@@ -89,13 +89,14 @@ public class RealTimeSignal extends Thread {
     public void startAcquisition() throws BITalinoException, Throwable {
         Frame[] samples;
         Frame[] samples20;
-        List<SignalAnalizer> analizers = new ArrayList<SignalAnalizer>();
+        List<SignalAnalyzer> analyzers = new ArrayList<SignalAnalyzer>();
 
         Socket socket = new Socket("localhost", 9000);
         PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         System.out.println(reader.readLine());
         System.out.println(reader.readLine());
+        stop=false;
         bitalino.start(acquisitionChannels); //starts acquiring from channels
 
         //To set the resting potential we need to read 1 seconds.
@@ -103,16 +104,17 @@ public class RealTimeSignal extends Thread {
         System.out.println(acquisitionChannels.length);
         for (int channel = 0; channel < acquisitionChannels.length; channel++) {
             System.out.println(acquisitionChannels[channel]);
-            analizers.add(new SignalAnalizer(samples, acquisitionChannels[channel],thresholds[channel]));
+            analyzers.add(new SignalAnalyzer(samples, acquisitionChannels[channel],thresholds[channel]));
         }
         System.out.println("Resting potential set");
         while (!stop) {
             int samples20ms = (int) (0.02 * samplingRate);
             samples20 = bitalino.read(samples20ms); //we will read 20 ms
             for (int channel = 0; channel < acquisitionChannels.length; channel++) {
-                boolean verification = analizers.get(channel).contraction(samples20);
+                boolean verification = analyzers.get(channel).contraction(samples20);
                 if (verification) {
                     writer.println(commands[channel]);
+                    System.out.println(commands[channel]);
                     writer.flush();
                 }
             }

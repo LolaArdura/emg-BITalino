@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  *
  * @author LolaA
  */
-public class SignalAnalizer {
+public class SignalAnalyzer {
 
     private int restingPotential;
     private int channel;
@@ -27,7 +27,7 @@ public class SignalAnalizer {
     //resting potential energy
     private int threshold;
     
-    public SignalAnalizer(Frame[] frame, int channel, int threshold) throws IOException{
+    public SignalAnalyzer(Frame[] frame, int channel, int threshold){
         this.threshold=threshold;
         this.channel=channel;
         
